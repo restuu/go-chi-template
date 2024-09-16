@@ -50,6 +50,6 @@ func (a *app) shutdown() {
 	case <-timeoutCtx.Done():
 		log.Print("timed out shutting down")
 	case <-dead:
-		log.Print("server shutdown")
+		log.Print("server shutdown gracefully")
 	}
 }
