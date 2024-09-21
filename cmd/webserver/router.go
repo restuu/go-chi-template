@@ -4,21 +4,25 @@ import (
 	"net/http"
 	"time"
 
+	userhttp "go-chi-template/internal/app/user/delivery/http"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/httplog/v2"
 )
 
-func initRouter() chi.Router {
+func initRouter(uc usecases) chi.Router {
 	r := chi.NewRouter()
 
 	setupMiddlewares(r)
 
-	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/ping", func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("pong"))
 	})
+
+	setupAppRoutes(r, uc)
 
 	return r
 }
@@ -44,4 +48,8 @@ func setupMiddlewares(r chi.Router) {
 		ExposedHeaders: []string{"Link"},
 		MaxAge:         300, // Maximum value not ignored by any of major browsers
 	}))
+}
+
+func setupAppRoutes(r chi.Router, uc usecases) {
+	userhttp.SetUserHTTPHandler(r, uc.UserUsecase)
 }
